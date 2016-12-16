@@ -1,0 +1,41 @@
+{
+  "name": "conversation-simple",
+  "description": "Shows how to combine Watson Conversation + Alchemy Language to answer factoids contained in Wikipedia",
+  "version": "0.1.1",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha",
+    "lint": "eslint .",
+    "autofix": "eslint --fix .",
+    "codecov": "npm run test && (codecov || true)"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "basic-auth-connect": "1.0.0",
+    "body-parser": "1.15.1",
+    "cloudant": "1.4.1",
+    "dotenv": "^2.0.0",
+    "express": "4.13.4",
+    "express-csv": "0.6.0",
+    "nano" : "*",
+    "q": "^1.4.1",
+    "strip-json-comments": "~2.0",
+    "uuid": "2.0.2",
+    "vcap_services": "^0.2.0",
+    "watson-developer-cloud": "^2.4.6"
+  },
+  "devDependencies": {
+    "babel-eslint": "^6.0.4",
+    "codecov": "^1.0.1",
+    "eslint": "^2.8.0",
+    "eslint-config-airbnb-es5": "^1.0.9",
+    "eslint-plugin-react": "^5.1.1",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5",
+    "supertest": "^1.2.0"
+  },
+  "engine": {
+    "node": ">= 4.2.4"
+  }
+}

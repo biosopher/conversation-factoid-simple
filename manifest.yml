@@ -1,0 +1,18 @@
+declared-services:
+  conversation_demo_service
+    label: conversation
+    plan: free
+  nlc_demo_service:
+    label: natural_language_classifier
+    plan: standard
+applications:
+- name: factoid-conversation
+  command: npm start
+  path: .
+  memory: 256M
+  instances: 1
+  services:
+  - conversation_demo_service
+  - nlc_demo_service
+  env:
+    NPM_CONFIG_PRODUCTION: false

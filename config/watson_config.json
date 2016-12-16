@@ -1,0 +1,20 @@
+{
+    "conversation" : {
+        "url" : "https://gateway.watsonplatform.net/conversation/api",
+        "version_date" : "2016-09-20",
+        "version" : "v1",
+
+        // REQUIRED - your conversation workspace ID
+        "workspace_id" : "YOUR WORKSPACE ID",
+
+        // OPTIONAL PARAMS: Used to run app locally and NOT on Bluemix
+        "username" : "USERNAME",
+        "password" : "PASSWORD"
+    },
+    "alchemyapi" : {
+        "version": "v1",
+
+        // OPTIONAL PARAMS: Used to run app locally and NOT on Bluemix
+        "api_key": "YOUR API KEY"
+    }
+}
