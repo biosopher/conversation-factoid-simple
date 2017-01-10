@@ -29,7 +29,6 @@ WatsonUtils.prototype.addUrlPaths = function(app) {
                 .then(function(people) {
                     internalThis.conversationUtils.processUserQuery(req,res,people)
                         .then(function(message) {
-                            console.log("Conversation completed: " + JSON.stringify(message));
                             if (!message.output || !message.output.text) {
                                 message.output = {};
                                 message.output.text = "Sorry. I'm having difficult understanding your question.";
