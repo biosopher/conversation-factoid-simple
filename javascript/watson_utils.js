@@ -1,11 +1,12 @@
 var fs = require('fs');
 var strip_json_comments = require('strip-json-comments');
 var ConversationUtils = require('../javascript/conversation_utils');
-var AlchemyApiUtils = require('../javascript/alchemyapi_utils');
+var AlchemyApiUtils = require('../javascript/alchemy_utils');
 
 //************ Constructor **************//
 function WatsonUtils(app) {
 
+    app.watson = this;
     this.loadConfig()
 
     this.conversationUtils = new ConversationUtils(this)
@@ -23,11 +24,16 @@ WatsonUtils.prototype.addUrlPaths = function(app) {
     // Endpoint to call from the client side
     var internalThis = this
     app.post( '/message', function(req, res) {
-        if ( req.body.input && req.body.context) {
-            internalThis.alchemyUtils.identifyEntities(req.body.input.text)
-                .then(function(entities) {
-                    internalThis.conversationUtils.processUserMessage(req,res,entities)
+        if (req.body.context) {
+            internalThis.alchemyUtils.identifyPeople(req.body.input.text)
+                .then(function(people) {
+                    internalThis.conversationUtils.processUserQuery(req,res,people)
                         .then(function(message) {
+                            console.log("Conversation completed: " + JSON.stringify(message));
+                            if (!message.output || !message.output.text) {
+                                message.output = {};
+                                message.output.text = "Sorry. I'm having difficult understanding your question.";
+                            }
                             res.json(message);
                         }, function (err) {
                             internalThis.handleError(res,"Failed to process conversation. " + JSON.stringify(err));
@@ -36,7 +42,12 @@ WatsonUtils.prototype.addUrlPaths = function(app) {
                     internalThis.handleError(res,"Failed to determine answer text for '" + userText + ". " + JSON.stringify(err));
                 });
         }else{
-            internalThis.initConversationService(res)
+            internalThis.conversationUtils.initConversationService(res)
+                .then(function(message) {
+                    res.json(message);
+                }, function (err) {
+                    internalThis.handleError(res,"Failed to determine answer text for '" + userText + ". " + JSON.stringify(err));
+                });
         }
     });
 }

@@ -13,11 +13,17 @@ var WatsonUtils = require('./javascript/watson_utils');
 var watson = new WatsonUtils(app);
 
 if (watson.isReady()) {
-// Start server
-  var port = process.env.VCAP_APP_PORT || 3000;
-  app.listen(port, function() {
-    console.log('Server running on port: %d', port);
-  });
+
+    // Look for Diego port variable
+    var localPort = 3000
+    var port = process.env.PORT || localPort;
+    if (port == localPort) {
+        // See if we're in a pre-Diego environment
+        port = process.env.VCAP_APP_PORT || localPort;
+    }
+    app.listen(port, function() {
+        console.log('Server running on port: %d', port);
+    });
 }else{
-  console.log("Failed to initialize app");
+    console.log("Failed to initialize app");
 }

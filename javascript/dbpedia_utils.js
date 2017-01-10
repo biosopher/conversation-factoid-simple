@@ -1,29 +1,21 @@
 var Q = require('q');
-var HttpUtils = require('../reasoning_pipelines/http_utils');
+var HttpUtils = require('../javascript/http_utils');
 
-// isFilterEnglishOnly = true if a text answer is typically provided in multiple language and only english is wanted.
-// isAnswerMissingData = true if answer should be obtained when no data found.
-function performQuery(entityInfo,typeArr,isFilterEnglishOnly,deferred,getAnswerText) {
-    // Create type array and pass to next method
-    performQueryForIndex(entityInfo,typeArr,isFilterEnglishOnly,deferred,0,getAnswerText);
-}
-function performQueryForIndex(entityInfo,typeArr,isFilterEnglishOnly,deferred,typeIndex,getAnswerText) {
+function performQuery(entityInfo,property) {
 
-    var entity = extractDBpediaEntity(entityInfo.links.dbpediaLink);
-    queryDBpedia(entity,typeArr[typeIndex],isFilterEnglishOnly)
+    var deferred = Q.defer();
+    var entity = extractDBpediaEntity(entityInfo.dbpediaLink);
+    queryDBpedia(entity,property)
         .then(function(answers) {
             if ((answers && answers.length > 0)) {
-                var answer = getAnswerText(answers,typeIndex);
-                deferred.resolve(answer);
-            }else if (typeIndex == typeArr.length - 1){
-                deferred.resolve(null);
+                deferred.resolve(answers);
             }else{
-                typeIndex++
-                performQueryForIndex(entityInfo,typeArr,isFilterEnglishOnly,deferred,typeIndex,getAnswerText);
+                deferred.resolve(null);
             }
         }, function(err) {
             deferred.reject(err);
         });
+    return deferred.promise;
 }
 
 // Alchemy returns disambiguated resources that may actually link to other pages with actual content so we
@@ -33,6 +25,9 @@ function followRedirects(resourceLink) {
 
     var deferred = Q.defer();
 
+    // ------------------------------
+    // Reformat SPARQL query for HTTP
+    // ------------------------------
     // select ?redirect
     // where {
     //      <http://dbpedia.org/resource/Hillary_Rodham_Clinton> dbo:wikiPageRedirects ?redirect .
@@ -56,17 +51,12 @@ function followRedirects(resourceLink) {
     return deferred.promise;
 }
 
-function queryDBpedia(entity,type,isFilterEnglishOnly) {
+function queryDBpedia(entity,propertyType) {
 
     var deferred = Q.defer();
-    var jsonResponse = {};
-
+    property = encodeURIComponent(propertyType)
     entity = entity.replace(" ","_");
-    var filter = '';
-    if (isFilterEnglishOnly) {
-        filter = '%20FILTER %28langMatches%28lang%28%3Fresource%29%2C"en"%29%29'
-    }
-    var url = "http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query=select%20%3Fresource%20where%20%7B%20%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F"+entity+"%3E%20"+type+"%20%3Fresource"+filter+"%7D&format=json";
+    var url = "http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query=select%20%3Fproperty%20where%20%7B%20%3Chttp%3A%2F%2Fdbpedia.org%2Fresource%2F"+entity+"%3E%20"+propertyType+"%20%3Fproperty%7D&format=json";
     new HttpUtils().sendToServer("GET",url,null,null,null,null)
         .then(function (data) {
             if (data != '') {
@@ -74,11 +64,11 @@ function queryDBpedia(entity,type,isFilterEnglishOnly) {
                     if (data.results && data.results.bindings && data.results.bindings.length > 0) {
                         var answers = [];
                         for (var i = 0; i < data.results.bindings.length; i++) {
-                            answers[i] = data.results.bindings[i].resource
+                            answers[i] = data.results.bindings[i].property
                         }
                         deferred.resolve(answers);
                     }else{
-                        console.log("Failure extracting "+type+" for "+entity+" from dbpedia results.\nURL: " + JSON.stringify(url));
+                        console.log("Failure extracting "+property+" for "+entity+" from dbpedia results.\nURL: " + JSON.stringify(url));
                         deferred.resolve(null); // Fail gracefully and assume a malformed result due to invalid query format
                     }
                 }catch(err) {
@@ -96,7 +86,7 @@ function queryDBpedia(entity,type,isFilterEnglishOnly) {
 }
 
 // Create html link to dbpedia using entity's name as clickable text
-function linkForEntity(entity) {
+function htmlLinkForEntity(entity) {
     var resourceLink
     if (entity.indexOf("dbpedia.org") >= 0) {
         resourceLink = entity;
@@ -140,7 +130,7 @@ function convertResourcesToHref(resources) {
 
 // Exported class
 module.exports.convertResourcesToHref = convertResourcesToHref
-module.exports.linkForEntity = linkForEntity
+module.exports.htmlLinkForEntity = htmlLinkForEntity
 module.exports.extractDBpediaEntity = extractDBpediaEntity
 module.exports.performQuery = performQuery
 module.exports.followRedirects = followRedirects

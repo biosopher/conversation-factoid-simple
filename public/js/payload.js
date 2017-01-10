@@ -7,7 +7,6 @@ var PayloadPanel = (function() {
   var settings = {
     selectors: {
       payloadColumn: '#payload-column',
-      payloadInitial: '#payload-initial-message',
       payloadRequest: '#payload-request',
       payloadResponse: '#payload-response'
     },
@@ -73,12 +72,6 @@ var PayloadPanel = (function() {
       }
       // Add new payload element
       payloadElement.appendChild(payloadDiv);
-      // Set the horizontal rule to show (if request and response payloads both exist)
-      // or to hide (otherwise)
-      var payloadInitial = document.querySelector(settings.selectors.payloadInitial);
-      if (Api.getRequestPayload() || Api.getResponsePayload()) {
-        payloadInitial.classList.add('hide');
-      }
     }
   }
 

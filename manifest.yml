@@ -1,5 +1,5 @@
 declared-services:
-  conversation_demo_service
+  conversation_demo_service:
     label: conversation
     plan: free
   nlc_demo_service:
