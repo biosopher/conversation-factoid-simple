@@ -16,3 +16,4 @@ applications:
   - alchemy_demo_service
   env:
     NPM_CONFIG_PRODUCTION: false
+

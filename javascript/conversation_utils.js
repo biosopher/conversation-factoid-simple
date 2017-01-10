@@ -13,11 +13,11 @@ function ConversationUtils(watson) {
     watson.config.conversation = extend(watson.config.conversation, bluemix.getServiceCreds('conversation')); // VCAP_SERVICES
     if ( !watson.config.conversation.username || watson.config.conversation.username == "USERNAME"
         || !watson.config.conversation.password || watson.config.conversation.password == "PASSWORD") {
-        console.log("The app has not been configured with a USERNAME and PASSWORD for Watson Conversation. Please update" +
+        console.log("ERROR: The app has not been configured with a USERNAME and PASSWORD for Watson Conversation. Please update" +
             " ./config/watson_config.json file with settings for your Conversation service.")
         return
-    } else if ( !watson.config.conversation.workspace_id || watson.config.conversation.workspace_id.split("-").length == 0) {
-        console.log("The app has not been configured with a WORKSPACE_ID for Watson Conversation. Please update" +
+    } else if ( !watson.config.conversation.workspace_id || watson.config.conversation.workspace_id.toLowerCase().indexOf("workspace") >= 0) {
+        console.log("ERROR: The app has not been configured with a WORKSPACE_ID for Watson Conversation. Please update" +
                     " ./config/watson_config.json file with settings for your Conversation service.")
         return
     }

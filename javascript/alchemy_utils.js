@@ -9,12 +9,11 @@ function AlchemyUtils(watson,callback) {
     // If bluemix credentials (VCAP_SERVICES) are present then override the local credentials
     watson.config.alchemy_api = extend(watson.config.alchemy_api, bluemix.getServiceCreds('alchemy_api'));
 
-    console.log(watson.config.alchemy_api)
     if (watson.config.alchemy_api
         && watson.config.alchemy_api.apikey && watson.config.alchemy_api.apikey.toLowerCase().indexOf("key") == -1) {
         this.alchemyService = wdc.alchemy_language({api_key: watson.config.alchemy_api.apikey});
     }else{
-        console.log("The app has not been configured with an apikey for Alchemy Language. Please update" +
+        console.log("ERROR: The app has not been configured with an apikey for Alchemy Language. Please update" +
                      " ./config/watson_config.json file with settings for your Alchemy Language service.");
     }
 }

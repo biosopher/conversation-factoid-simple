@@ -27,5 +27,5 @@ if (watson.isReady()) {
         console.log('Server running on port: %d', port);
     });
 }else{
-    console.log("Failed to initialize app");
+    console.log("ERROR: Failed to initialize app.  Ensure that all Watson services were configured and started properly.");
 }
