@@ -190,12 +190,12 @@ div {
 }
 
 #textInput {
-    width: 380px;
+    width: 370px;
     border: none;
     outline: none;
-    background: transparent;
+    background-color: #eee;
     font-size: 1rem;
-    color: #323232;
+    color: black;
     letter-spacing: 0.015rem;
     line-height: 1.3125rem;
     height: 2.5rem;
@@ -203,7 +203,6 @@ div {
     padding-left: 0.125rem;
     margin-bottom: -0.125rem;
     font-family: Helvetica Neue for IBM, Helvetica Neue, Helvetica, Arial, sans-serif;
-    background-color: white;
 }
 
 #textInput.underline {
@@ -237,6 +236,7 @@ input:-moz-placeholder {
     border-bottom: 0.0625rem solid #aeaeae;
     margin-left: 0.5rem;
     margin-right: 0.5rem;
+    background-color: #eee;
 }
 
 #textInputDummy {

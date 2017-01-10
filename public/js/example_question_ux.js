@@ -73,7 +73,8 @@ ExampleQuestionUX.prototype.refreshExampleQuestions = function(isInitialLoading)
     }
 
     // Determine max visible questions
-    var maxFloatingExamples = $(document).height()/125.0; // Limit to one example per 50px vertical
+    var maxheight = $(document).height()-50
+    var maxFloatingExamples = maxheight/125.0; // Limit to one example per 50px vertical
     if (maxFloatingExamples > this.exampleQuestions.length) {
         maxFloatingExamples = this.exampleQuestions.length;
     }
@@ -109,7 +110,8 @@ ExampleQuestionUX.prototype.getNonOverlappingOffsetY = function(isInitialLoading
     var offsetY = -1;
     var testCount = 0;
     while (isOverlap) {
-        offsetY = Math.floor((Math.random() * ($(document).height()-30)) + 15);
+        var maxheight = $(document).height()-75
+        offsetY = Math.floor((Math.random() * maxheight) + 15);
         var passedTest = true;
         for (var i = 0; i < this.visibleExampleLinks.length;i++) {
             var link = this.visibleExampleLinks[i];
