@@ -37,6 +37,7 @@ AlchemyUtils.prototype.identifyPeople = function(userText) {
             deferred.resolve(people)
         }else{
             var people = []
+            console.log("User text: " + userText +"\nEntities found: " + JSON.stringify(foundEntities))
             foundEntities.entities.forEach(function(entity) {
                 if (entity.type == "Person") {
                     if (entity.disambiguated && entity.disambiguated.dbpedia) {

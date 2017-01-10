@@ -93,9 +93,9 @@ function htmlLinkForEntity(entity) {
         entity = extractDBpediaEntity(resourceLink);
     }else{
         // Handle entities being passed as resource urls
-        resourceLink = "http://dbpedia.org/resource/" + entity.replace(" ", "_");
+        resourceLink = "http://dbpedia.org/resource/" + entity.replace(/ /g, "_");
     }
-    return "<a href='" + resourceLink + "' target='_blank'>" + entity.replace("_", " ") + "</a>";
+    return "<a href='" + resourceLink + "' target='_blank'>" + entity.replace(/_/g, " ") + "</a>";
 }
 function extractDBpediaEntity(dbpediaink) {
     var index = dbpediaink.lastIndexOf("/")+1;
