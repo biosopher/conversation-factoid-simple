@@ -2,8 +2,8 @@ declared-services:
   conversation_demo_service:
     label: conversation
     plan: free
-  nlc_demo_service:
-    label: natural_language_classifier
+  alchemy_demo_service:
+    label: alchemy_api
     plan: standard
 applications:
 - name: factoid-conversation
@@ -13,6 +13,6 @@ applications:
   instances: 1
   services:
   - conversation_demo_service
-  - nlc_demo_service
+  - alchemy_demo_service
   env:
     NPM_CONFIG_PRODUCTION: false

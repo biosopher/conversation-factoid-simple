@@ -11,10 +11,10 @@
         "username" : "USERNAME",
         "password" : "PASSWORD"
     },
-    "alchemyapi" : {
+    "alchemy_api" : {
         "version": "v1",
 
         // OPTIONAL PARAMS: Used to run app locally and NOT on Bluemix
-        "api_key": "YOUR API KEY"
+        "apikey": "YOUR API KEY"
     }
 }

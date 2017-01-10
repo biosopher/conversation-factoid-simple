@@ -8,6 +8,8 @@ var bodyParser = require( 'body-parser' );  // parser for post requests
 app.use( express.static( './public' ) ); // load UI from public folder
 app.use( bodyParser.json() );
 
+console.log(process.env)
+
 // Initialize Watson
 var WatsonUtils = require('./javascript/watson_utils');
 var watson = new WatsonUtils(app);

@@ -30,6 +30,8 @@ ExampleQuestionUX.prototype.loadExampleQuestions = function() {
     this.exampleQuestions[14] = "Lookup the birthdate of Lady Gaga."
     this.exampleQuestions[15] = "How old is Sylvester Stallone?"
     this.exampleQuestions[16] = "Where was Tom Cruise born?"
+    this.exampleQuestions[17] = "Can you tell me the names for Arnold Schwarzenegger's children?"
+    this.exampleQuestions[17] = "Does Sylvester Stallone have any children?"
 }
 
 ExampleQuestionUX.prototype.displayExampleQuestions = function() {
