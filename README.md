@@ -2,7 +2,7 @@
 
 This Node.js app demonstrates creation of a bot to answer factoid-style questions about famous people using answers pulled from DBpedia/Wikipedia.
 
-You can view a [demo of the factoid bot][http://factoid-conversation.mybluemix.net/] running on Bluemix.
+You can view a [demo of the factoid bot](http://factoid-conversation.mybluemix.net/) running on Bluemix.
 
 ## Complete Tutorial
 
@@ -11,4 +11,5 @@ A [six-part tutorial on the factoid bot](https://medium.com/cognitive-resonance/
 ## Screenshot of Factoid Bot
 
 Just so you know what you're getting into, here's a screenshot of the working bot:
+
 [![](https://github.com/biosopher/conversation-factoid-simple/blob/master/wiki/media/screenshot.jpg)](http://factoid-conversation.mybluemix.net/)
