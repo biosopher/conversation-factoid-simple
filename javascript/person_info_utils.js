@@ -35,6 +35,9 @@ PersonInfo.prototype.getAnswerForIntent = function(intent, person) {
         case "person-spouse":
             this.answerSpouse(deferred,person);
             break;
+        case "person-summary":
+            this.answerSummary(deferred,person);
+            break;
         default:
             deferred.resolve(null);
             break;
@@ -46,8 +49,8 @@ PersonInfo.prototype.answerBirthday = function(deferred,person) {
 
     DBpediaUtils.performQuery(person,"dbo:birthDate")
         .then(function (answers) {
-            person.details = {}
             if (answers) {
+                person.details = {}
                 person.details["years_old"] = DateUtils.getYearsSinceNow(answers[0].value);
                 person.details["birth_date"] = DateUtils.getDateAsString(answers[0].value)
             }
@@ -61,8 +64,8 @@ PersonInfo.prototype.answerBirthPlace = function(deferred,person) {
 
     DBpediaUtils.performQuery(person,"dbp:birthPlace")
         .then(function (answers) {
-            person.details = {}
             if (answers) {
+                person.details = {}
                 if (answers[0].type == "literal") {
                     person.details["birth_place"] = answers[0].value
                 }else{
@@ -90,8 +93,8 @@ PersonInfo.prototype.answerChildren = function(deferred,person) {
     var internalThis = this
     DBpediaUtils.performQuery(person,"dbp:children")
         .then(function (answers) {
-            person.details = {}
             if (answers) {
+                person.details = {}
                 if (answers.length == 1 && parseInt(answers[0].value) != NaN) {
                     // Handle when children are only provided as a number.
                     person.details["children_count"] = parseInt(answers[0].value)
@@ -117,8 +120,8 @@ PersonInfo.prototype.answerChildren = function(deferred,person) {
                 // Check alternate path for children
                 DBpediaUtils.performQuery(person,["dbo:child"])
                     .then(function (answers) {
-                        person.details = {}
                         if (answers) {
+                            person.details = {}
                             person.details["children_count"] = answers.length
                             person.details["children_names"] = "";
                             for (var i = 0; i < answers.length; i++) {
@@ -150,13 +153,14 @@ PersonInfo.prototype.answerDeath = function(deferred,person) {
 
     DBpediaUtils.performQuery(person,"dbo:deathDate")
         .then(function (answers) {
-            person.details = {}
             if (answers) {
+                person.details = {}
                 person.details["death_date"] = DateUtils.getDateAsString(answers[0].value)
             }
             DBpediaUtils.performQuery(person,"dbo:deathPlace")
                 .then(function (answers) {
                     if (answers) {
+                        person.details = {}
                         person.details["death_place"] = DBpediaUtils.htmlLinkForEntity(answers[0].value)
                     }
                     deferred.resolve(person)
@@ -172,8 +176,8 @@ PersonInfo.prototype.answerNetWorth = function(deferred,person) {
 
     DBpediaUtils.performQuery(person,"dbo:networth")
         .then(function (answers) {
-            person.details = {}
             if (answers) {
+                person.details = {}
                 var netWorth = Number(answers[0].value).toFixed(0);
                 person.details["net_worth"] = "$" + netWorth.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             }
@@ -186,8 +190,8 @@ PersonInfo.prototype.answerSchooling = function(deferred,person) {
 
     DBpediaUtils.performQuery(person,"dbp:almaMater")
         .then(function (answers) {
-            person.details = {}
             if (answers) {
+                person.details = {}
                 var uris = DBpediaUtils.getUrisForResources(answers)
                 person.details["alma_mater"] = DBpediaUtils.convertResourcesToHref(uris)
             }
@@ -201,30 +205,64 @@ PersonInfo.prototype.formatSpouseAnswer = function(person,answers) {
     // Assume spouse's in order so go in reverse
     answers.reverse()
     for (var i in answers) {
+        // dbp:spouse can return the marriage date too so look for uri of spouse
         if (answers[i].type == "uri"){
-            // dbp:spouse can return the marriage date too so look for uri of spouse
+            person.details = {}
             person.details["spouse"] = DBpediaUtils.extractDBpediaEntity(answers[i].value).replace("_"," ")
             person.details["spouse_href"] = DBpediaUtils.htmlLinkForEntity(answers[i].value)
             break
         }
     }
-    return person
 }
+
 PersonInfo.prototype.answerSpouse = function(deferred,person) {
 
     var internalThis = this
-        DBpediaUtils.performQuery(person,"dbo:spouse")
+    DBpediaUtils.performQuery(person,"dbo:spouse")
         .then(function (answers) {
-            person.details = {}
             if (answers) {
-                person = internalThis.formatSpouseAnswer(person,answers)
+                internalThis.formatSpouseAnswer(person, answers)
+            }
+            if (person.details) {
                 deferred.resolve(person)
             }else{
                 DBpediaUtils.performQuery(person,"dbp:spouse")
                     .then(function (answers) {
                         if (answers) {
-                            person = internalThis.formatSpouseAnswer(person,answers)
+                            internalThis.formatSpouseAnswer(person,answers)
                         }
+                        deferred.resolve(person)
+                    }, function (err) {
+                        deferred.reject(err)
+                    });
+            }
+        }, function (err) {
+            deferred.reject(err)
+        });
+}
+
+PersonInfo.prototype.formatSummaryAnswer = function(person,answers) {
+    for (var i in answers) {
+        if (answers[i]["xml:lang"] == "en"){
+            person.details = {}
+            person.details.summary = answers[i].value
+            break
+        }
+    }
+}
+
+PersonInfo.prototype.answerSummary = function(deferred,person) {
+
+    var internalThis = this
+    DBpediaUtils.performQuery(person,"rdfs:comment")
+        .then(function (answers) {
+            internalThis.formatSummaryAnswer(person, answers)
+            if (person.details) {
+                deferred.resolve(person)
+            }else{
+                DBpediaUtils.performQuery(person,"dbo:abstract")
+                    .then(function (answers) {
+                        internalThis.formatSummaryAnswer(person, answers)
                         deferred.resolve(person)
                     }, function (err) {
                         deferred.reject(err)
